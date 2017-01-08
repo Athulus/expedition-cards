@@ -18,6 +18,8 @@ const Webpack = require('webpack-stream');
 const Wrap = require('gulp-wrap');
 
 
+var port = process.env.DOCKER_PORT || 8000
+
 Gulp.task('default', ['watch']);
 
 Gulp.task('watch', ['build'], () => {
@@ -31,7 +33,7 @@ Gulp.task('watch', ['build'], () => {
   Gulp.watch(['app/themes/*/images/**/*'], ['themes-images']);
 
   BrowserSync.init({
-    port: 8000,
+    port: port,
     server: {
       baseDir: "./dist"
     },
@@ -91,7 +93,7 @@ Gulp.task('app-css', () => {
       .pipe(Autoprefixer({
           browsers: ['last 2 versions'],
       }))
-      .pipe(MinifyCss())
+      .pipe(MinifyCss({processImport: false}))
       .pipe(Gulp.dest('dist/css'))
       .pipe(BrowserSync.stream());
 });
@@ -108,7 +110,7 @@ Gulp.task('themes-css', () => {
       .pipe(Autoprefixer({
           browsers: ['last 2 versions'],
       }))
-      .pipe(MinifyCss())
+      .pipe(MinifyCss({processImport: false}))
       .pipe(Concat('themes.css'))
       .pipe(Gulp.dest('dist/css'))
       .pipe(BrowserSync.stream());
